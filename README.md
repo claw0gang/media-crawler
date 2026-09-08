@@ -1,6 +1,6 @@
 # Media Crawler
 
-**Version:** 1.0.0  
+**Version:** 1.0.1  
 **Status:** Production  
 **License:** MIT-0
 
@@ -10,6 +10,7 @@ Reusable OpenClaw skill for acquiring and normalizing media-source content witho
 
 - YouTube transcript acquisition with normalized JSON output.
 - Explicit `youtube_video` and `youtube_short` content kinds.
+- Rate-limit-safe native X acquisition: multi-account searches may use `allowed_x_handles`; independent X calls are serialized rather than parallelized.
 - Ordinary X posts treated as already-compact source material.
 - Long-form X articles treated as long-form content suitable for downstream reduction when needed.
 - Modular boundary for future RSS, article, news, podcast, and other source adapters.
@@ -31,6 +32,10 @@ Optional:
 - `--lang <code>` requests a preferred transcript language.
 
 The adapter writes one structured JSON result and removes its own temporary files.
+
+## X acquisition discipline
+
+Use native `x_search` when it is available to the consuming workflow. Do not burst independent X searches concurrently. When one query can safely cover multiple accounts, use `allowed_x_handles`; when the caller requires independent per-handle coverage or targeted follow-up, issue those calls strictly serially and consume each result or error before dispatching the next.
 
 ## Boundary
 
