@@ -1,7 +1,7 @@
 ---
 name: media-crawler
 description: Acquire and normalize media-source content for research, monitoring, summarization, and editorial workflows.
-version: 1.0.0
+version: 1.0.1
 metadata:
   openclaw:
     emoji: "📡"
@@ -44,6 +44,14 @@ The adapter can acquire either kind. The consuming workflow decides which kinds 
 Raw transcripts can be large. Return them as source data; reduction or compaction belongs to the consuming workflow.
 
 ## X
+
+Use native `x_search` when the caller exposes it. Acquisition must be rate-limit safe:
+
+- Never dispatch multiple independent `x_search` calls concurrently or in parallel.
+- When one semantic query can cover several accounts without weakening the caller's coverage requirement, prefer one bounded call using `allowed_x_handles` rather than one call per handle.
+- When independent per-handle coverage or targeted follow-up is required, issue calls strictly serially: fully consume the result or error from one call before dispatching the next.
+- A failure or rate limit for one query must not implicitly cancel unrelated remaining acquisition. Continue only through later serialized calls allowed by the caller and provider state.
+- Do not add extra `x_search` calls merely to compact or rewrite already-acquired ordinary posts.
 
 Distinguish ordinary posts from long-form articles:
 
